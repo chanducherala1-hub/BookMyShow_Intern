@@ -27,13 +27,12 @@ ALLOWED_HOSTS = [
 
 # Application definition
 INSTALLED_APPS = [
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
     
@@ -73,7 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'BookMyShow.wsgi.application'
 
 # Database Configuration
-# Fallback to local Postgres or Render URL if environment variable isn't set
 DEFAULT_DATABASE_URL = 'postgresql://bookmyshow_l8u5_user:uT42lNE9Bmt9fhgYt81N2kZfWu7IwZTs@dpg-d9nh04m1egvs7382j6jg-a.oregon-postgres.render.com/bookmyshow_l8u5'
 
 DATABASES = {
@@ -110,26 +108,34 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static & Media Files Settings
+# Static Files Settings
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'BookMyShow/static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Enable WhiteNoise compression and caching storage for production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Media Files & Cloudinary Settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cloudinary Configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('etr8wbti'),
-    'API_KEY': os.environ.get('667632822188361'),
-    'API_SECRET': os.environ.get('2NV2tJz0RAYRP94sUhozIgB_dpE'),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'etr8wbti'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '667632822188361'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '2NV2tJz0RAYRP94sUhozIgB_dpE'),
 }
 
-# Tell Django to use Cloudinary for media uploads
+# Storage backends configuration for Django 4.2+ & 6.x
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Razorpay Integration
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='')
 RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='')
