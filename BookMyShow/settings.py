@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -96,6 +97,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+DATABASES['default']=dj_database_url.parse('postgresql://bookmyshow_l8u5_user:uT42lNE9Bmt9fhgYt81N2kZfWu7IwZTs@dpg-d9nh04m1egvs7382j6jg-a.oregon-postgres.render.com/bookmyshow_l8u5')
 
 
 # Password validation
@@ -137,6 +139,12 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'BookMyShow/static')
 ]
 STATIC_ROOT=os.path.join(BASE_DIR,'assets')
+
+ALLOWED_HOSTS = [
+    "BookMyShow.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
 AUTH_USER_MODEL = 'users.User'
