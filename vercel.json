@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "BookMyShow/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb"
-      }
+      "src": "index.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "BookMyShow/wsgi.py"
+      "dest": "index.py"
     }
-  ],
-  "env": {
-    "DJANGO_SETTINGS_MODULE": "BookMyShow.settings"
-  }
+  ]
 }
