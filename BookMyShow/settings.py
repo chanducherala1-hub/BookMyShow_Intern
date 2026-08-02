@@ -155,3 +155,5 @@ RAZORPAY_KEY_SECRET=config("RAZORPAY_KEY_SECRET")
 
 RAZORPAY_CALLBACK_URL="http://127.0.0.1:8000/payment-verify/"
 
+
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
