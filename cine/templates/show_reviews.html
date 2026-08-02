@@ -1,0 +1,83 @@
+
+
+<h1>{{ movie.title }} Reviews</h1>
+
+{% if reviews %}
+
+    {% for review in reviews %}
+
+    <div class="review-card">
+
+        <p><b>{{ review.user.email }}</b></p>
+        <p>
+            ⭐ {{ review.rating }}/5
+        </p>
+
+        <p>
+            {{ review.review }}
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<h2>No reviews available.</h2>
+
+{% endif %}
+<style>
+
+body{
+    background:#f5f5f5;
+}
+
+h1{
+    text-align:center;
+    margin:30px;
+}
+
+.review-card{
+
+    width:70%;
+    margin:20px auto;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:10px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+
+}
+
+.review-card h3{
+
+    margin:0;
+
+    color:#f84464;
+
+}
+
+.review-card p{
+
+    margin-top:10px;
+
+    font-size:17px;
+
+}
+
+.badge{
+
+    background:green;
+
+    color:white;
+
+    padding:5px 10px;
+
+    border-radius:5px;
+
+}
+
+</style>

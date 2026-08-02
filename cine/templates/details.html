@@ -1,0 +1,262 @@
+
+{% load static %}
+
+
+
+<link rel="stylesheet" href="{% static 'css/details.css' %}">
+
+<div class="movies-container">
+    <div class="movie-card">
+       <div class="banner">
+
+            {% if movie.images.first %}
+                <img src="{{ movie.images.first.image.url }}"
+                     alt="{{ movie.title }}"
+                     class="banner-img">
+            {% else %}
+                <img src="{% static 'assets/no-image.png' %}"
+                     alt="No Image"
+                     class="banner-img">
+            {% endif %}
+
+            <div class="banner-text">
+
+                <h1>{{ movie.title }}</h1>
+
+                {% if movie.youtube_trailer_url %}
+                    <a href="{{ movie.youtube_trailer_url }}"
+                       target="_blank"
+                       class="trailer-btn">
+                        ▶ Watch Trailer
+                    </a>
+                {% endif %}
+
+                <div class="banner-meta">
+
+                    <span>⭐ {{ movie.average_rating }}</span>
+
+                    <span>{{ movie.duration_minutes }} mins</span>
+
+                    <span>
+                        {% for genre in movie.genres.all %}
+                            {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </span>
+
+                    <span>{{ movie.release_date|date:"F d, Y" }}</span>
+
+                    <span>{{ movie.age_certification }}</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="movie-info">
+
+            <h2>About the Movie</h2>
+
+            <p>
+                <strong>Languages:</strong>
+
+                {% for language in movie.languages.all %}
+                    {{ language.language }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    No Languages Available
+                {% endfor %}
+            </p>
+
+            <p>{{ movie.description }}</p>
+
+        </div>
+
+        <div class="cast-section">
+
+            <h2>Cast</h2>
+
+            <div class="cast-grid">
+
+                {% for cast in movie.cast.all %}
+
+                <div class="cast-item">
+
+                    {% if cast.image %}
+                        <img src="{{ cast.image.url }}" alt="{{ cast.name }}">
+                    {% else %}
+                        <img src="{% static 'assets/no-person.png' %}" alt="No Image">
+                    {% endif %}
+
+                    <p class="cast-name">{{ cast.name }}</p>
+                    <br>
+                    <br>
+                    <p class="cast-role"><strong>{{ cast.role }}</strong></p>
+
+                </div>
+
+                {% empty %}
+
+                    <p>No Cast Members Available.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <div class="gallery-section">
+
+            <h2>Gallery</h2>
+
+            <div class="gallery">
+
+                {% for image in movie.images.all %}
+
+                    <img src="{{ image.image.url }}"
+                         alt="{{ movie.title }}">
+
+                {% empty %}
+
+                    <p>No Images Available.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% if user.is_authenticated %}
+
+<div class="book-ticket-btn">
+    <a href="{% url 'books' movie.id %}">
+        Book Tickets
+    </a>
+</div>
+
+{% endif %}
+
+{% if review.verified_viewer %}
+    <span class="badge">
+        ✓ Verified Viewer
+    </span>
+{% endif %}
+<h2>Similar Movies</h2>
+
+<div class="movie-row">
+
+    {% for movie in similar_movies %}
+
+        <a href="{% url 'details' movie.id %}">
+
+            {{ movie.title }}
+
+        </a>
+
+    {% endfor %}
+
+</div>
+<a href="{% url 'add_review' movie.id %}">
+    <button class="review-btn">Add Review</button>
+</a>
+<a href="{% url 'show_reviews' movie.id %}">
+    <button class="review-btn">
+        Show Reviews
+    </button>
+</a>
+<style>
+    .badge {
+    background: green;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+.review-buttons{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.review-btn,
+.show-review-btn{
+    width:160px;
+    height:45px;
+    border:none;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.review-btn{
+    background:#f84464;
+}
+
+.review-btn:hover{
+    background:#d73754;
+}
+
+.show-review-btn{
+    background:#2196F3;
+}
+
+.show-review-btn:hover{
+    background:#1976D2;
+}
+.gallery {
+    height: 200px;
+    width: 100%;
+    display: flex;         
+    gap: 10px;             
+    overflow-x: auto;       
+    overflow-y: hidden;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.gallery img {
+    height: 100%;          
+    width: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;        
+}
+.cast-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.cast-item {
+    text-align: center;
+}
+.cast-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10%; 
+}
+
+.cast-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #000000;
+}
+
+.cast-role {
+    font-size: 12px;
+    margin-top: -20px;
+    color: #000000;
+}
+</style>
+

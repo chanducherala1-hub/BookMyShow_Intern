@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="con">
+        <h3>Register</h3>
+        <form action="/register/" method="POST">
+            {% csrf_token %}
+            <input type="text" name="full_name" placeholder="Full Name" required class="pn">
+            <input type="text" name="phone_number" placeholder="Phone Number" required class="pn">
+            <input type="email" name="email" placeholder="Email" required class="pn">
+            <input type="password" name="password1" placeholder="Password" required class="pn">
+            <input type="password" name="password2" placeholder="Confirm Password" required class="pn">
+            <a href="/login/" style="text-decoration: none;">Already Have An Account</a>
+            <input type="submit" value="Submit" class="sub">
+        </form>
+        
+        <script>
+            {% for message in messages %}
+                alert("{{ message|escapejs }}");
+            {% endfor %}
+        </script>    
+    </div>
+</body>
+</html>

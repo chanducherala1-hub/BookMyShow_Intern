@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    </style>
+</head>
+<body>
+    <div class="ticket-box">
+        <div class="header">
+            <h2>🎟️ Booking Confirmed</h2>
+            <div class="movie-title">{{ movie.title }}</div>
+        </div>
+
+        <div class="details">
+            <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
+            <p><strong>Theater:</strong> {{ booking.show.screen.theater.theater_name }} ({{ booking.show.screen.theater.city }})</p>
+            <p><strong>Screen:</strong> Screen {{ booking.show.screen.screen_number }} [{{ booking.show.screen.screen_type }}]</p>
+            <p><strong>Date & Time:</strong> {{ show.show_date }} at {{ show.show_time }}</p>
+            <p><strong>Seats:</strong> {{ seat_numbers }}</p>
+            <p><strong>Seats:</strong> 
+                {% for seat in seats %}
+                    {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    N/A
+                {% endfor %}
+            </p>
+            <p><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</p>
+        </div>
+
+        <div class="qr-section">
+            <img src="data:image/png;base64,{{ qr_code }}" width="150" height="150" alt="Ticket QR Code" />
+            <p><small>Present this QR code at the theater entrance</small></p>
+        </div>
+    </div>
+</body>
+</html>

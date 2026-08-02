@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+<h3>It All Starts Here!</h3>
+
+<div class="movie-row">
+
+    {% for movie in movies %}
+
+    <div class="movie">
+
+        <a href="{% url 'details' movie.id %}" style="text-decoration: none; color:black">
+
+            {% if movie.images.first %}
+                <img src="{{ movie.images.first.image.url }}"
+                     alt="{{ movie.title }}"
+                     class="img">
+            {% endif %}
+
+            <p>⭐ {{ movie.average_rating }}</p>
+
+            <p class="movie-title">
+                <strong>{{ movie.title }}</strong>
+            </p>
+
+        </a>
+
+    </div>
+
+    {% empty %}
+
+        <p>No movies available.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+<style>
+.movie-row {
+    display: flex;       /* makes them sit in 1 line */
+    gap: 20px;
+    overflow-x: auto;    /* horizontal scroll */
+    padding: 20px;
+}
+
+.movie {
+    flex: 0 0 200px;     /* fixed width card */
+    cursor: pointer; 
+    text-align: center;
+}
+
+.movie:hover {
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
+.img {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 200px;
+    height: 250px;
+    object-fit: cover;
+}
+ 
+.movie-title {
+    padding-top: 8px;
+}
+</style>

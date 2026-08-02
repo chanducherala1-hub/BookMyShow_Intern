@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+
+
+<div class="movie-row" style="margin-left: 600px;">
+    {% if allposts|length < 1 %}
+
+<div class="no-result-container">
+
+    <h2>Showing 0 results</h2>
+
+    <p>
+        No search results found for
+        <strong>"{{ search }}"</strong>.
+    </p>
+
+    <img
+        src="{% static 'images/images.jpg' %}"
+        alt="No results"
+        class="no-result-img"
+    >
+
+</div>
+
+{% endif %}
+    {% for movie in allposts %}
+
+    <div class="movie">
+
+        <a href="{% url 'details' movie.id %}">
+
+            {% if movie.images.first %}
+                <img src="{{ movie.images.first.image.url }}"
+                     alt="{{ movie.title }}"
+                     class="img">
+            {% endif %}
+
+            <p>⭐ {{ movie.average_rating }}</p>
+
+            <p class="movie-title">
+                <strong>{{ movie.title }}</strong>
+            </p>
+
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+<style>
+.movie-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.movie {
+    width: 220px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.movie:hover {
+    transform: scale(1.05);
+}
+
+.img {
+    width: 200px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.movie-title {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.no-result-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.no-result-container h2 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.no-result-container p {
+    font-size: 20px;
+    color: #666;
+}
+
+.no-result-img {
+    width: 350px;
+    max-width: 100%;
+    height: auto;
+    margin-top: 30px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.search-box input {
+    width: 350px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.search-box button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #f84464;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.search-box button:hover {
+    background-color: #d73754;
+}   

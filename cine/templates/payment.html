@@ -1,0 +1,252 @@
+<div class="payment-container">
+
+    <h1>{{ movie.title }}</h1>
+
+    <h2>{{ movie.duration_minutes }} mins</h2>
+
+    <h3>
+        Genres:
+        {% for genre in movie.genres.all %}
+            {{ genre.name }}
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </h3>
+
+    <h3>
+        Languages:
+        {% for language in movie.languages.all %}
+            {{ language.language }}
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </h3>
+
+    <h3>Certificate: {{ movie.age_certification }}</h3>
+
+    <h3>{{ show.screen.theater.theater_name }}</h3>
+
+    <h3>Screen {{ show.screen.screen_number }}</h3>
+
+    <h3>{{ show.show_date }}</h3>
+
+    <h3>{{ show.show_time }}</h3>
+
+    <div class="seats-box">
+
+        <h2>Selected Seats</h2>
+
+        {% for seat in selected_seats %}
+            {{ seat }}
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <div class="amount-box">
+
+        Total Amount: ₹{{ amount }}
+
+    </div>
+
+    <button id="pay-btn" class="pay-btn">
+
+        Proceed to Payment
+
+    </button>
+
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+
+document.getElementById("pay-btn").onclick = function (e) {
+
+    var options = {
+
+        key: "{{ razorpay_key }}",
+
+        amount: "{{ amount|floatformat:0 }}00",
+
+        currency: "INR",
+
+        order_id: "{{ order_id }}",
+
+        name: "BookMyShow",
+
+        description: "Movie Ticket Booking",
+
+        prefill: {
+
+            name: "{{ request.user.full_name }}",
+
+            email: "{{ request.user.email }}"
+        },
+
+        theme: {
+
+            color: "#F84464"
+        },
+
+        handler: function(response) {
+
+            alert("Handler called");
+
+            console.log(response);
+
+            var form = document.createElement("form");
+
+            form.method = "POST";
+
+            form.action = "{% url 'payment_success' %}";
+
+            var csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "csrfmiddlewaretoken";
+            csrf.value = "{{ csrf_token }}";
+
+            var payment = document.createElement("input");
+            payment.type = "hidden";
+            payment.name = "razorpay_payment_id";
+            payment.value = response.razorpay_payment_id;
+
+            var order = document.createElement("input");
+            order.type = "hidden";
+            order.name = "razorpay_order_id";
+            order.value = response.razorpay_order_id;
+
+            var signature = document.createElement("input");
+            signature.type = "hidden";
+            signature.name = "razorpay_signature";
+            signature.value = response.razorpay_signature;
+
+            form.appendChild(csrf);
+            form.appendChild(payment);
+            form.appendChild(order);
+            form.appendChild(signature);
+
+            document.body.appendChild(form);
+
+            form.submit();
+        }
+    };
+
+    var rzp = new Razorpay(options);
+
+    rzp.open();
+
+    e.preventDefault();
+
+};
+
+</script>
+<style>
+   body{
+    margin:0;
+    padding:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg,#141e30,#243b55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.payment-container{
+    width:550px;
+    background:#fff;
+    border-radius:15px;
+    padding:35px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+
+.payment-container h1{
+    text-align:center;
+    color:#F84464;
+    margin-bottom:10px;
+    font-size:32px;
+}
+
+.payment-container h2{
+    text-align:center;
+    color:#555;
+    margin-top:0;
+    margin-bottom:25px;
+}
+
+.payment-container h3{
+    color:#333;
+    font-size:17px;
+    margin:14px 0;
+    border-bottom:1px solid #ececec;
+    padding-bottom:8px;
+}
+
+.seats-box{
+    background:#f7f7f7;
+    border-radius:10px;
+    padding:15px;
+    margin-top:20px;
+    border-left:5px solid #F84464;
+}
+
+.seats-box h2{
+    margin:0 0 10px;
+    color:#F84464;
+    font-size:22px;
+}
+
+.amount-box{
+    margin-top:25px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    color:#0b8f4d;
+    background:#eafaf0;
+    padding:15px;
+    border-radius:10px;
+}
+
+.pay-btn{
+    width:100%;
+    margin-top:30px;
+    padding:16px;
+    border:none;
+    border-radius:10px;
+    background:#F84464;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.pay-btn:hover{
+    background:#d92f52;
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(248,68,100,.35);
+}
+
+.pay-btn:active{
+    transform:scale(.98);
+}
+
+@media(max-width:600px){
+
+    .payment-container{
+        width:90%;
+        padding:20px;
+    }
+
+    .payment-container h1{
+        font-size:26px;
+    }
+
+    .payment-container h3{
+        font-size:15px;
+    }
+
+    .amount-box{
+        font-size:20px;
+    }
+}
+</style>

@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login page</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="con">
+        <h3>Login</h3>
+
+        {% if not otp_sent %}
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Enter Email" required class="pn"><br>
+                <input type="submit" name="send_otp" value="Send OTP" class="sub">
+            </form>
+
+        {% else %}
+            <p style="font-size: 13px; margin-bottom: 10px;">OTP sent to <strong>{{ email }}</strong></p>
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="email" value="{{ email }}">
+                <input type="text" name="otp" placeholder="Enter 6-digit OTP" required class="pn" maxlength="6"><br>
+                <input type="submit" name="verify_otp" value="Login" class="sub">
+            </form>
+
+        {% endif %}
+
+        <div style="margin-top: 15px;">
+            <a href="{% url 'register' %}" style="text-decoration: none;">Don't Have Account?</a>
+        </div>
+
+        <div>
+            <script>
+                {% for message in messages %}
+                    alert("{{ message|escapejs }}");
+                {% endfor %}
+            </script>    
+        </div>
+    </div>
+</body>
+</html>

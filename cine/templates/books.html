@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tickets</title>
+</head>
+<body>
+
+{% for movie in movies %}
+    <h2>{{ movie.title }}</h2>
+    <h4>Movie Runtime: {{ movie.duration_minutes }} mins</h4>
+{% endfor %}
+
+<hr>
+
+<div class="dates">
+    {% for date in available_dates %}
+        <a href="?date={{ date.show_date|date:'Y-m-d' }}">
+            {{ date.show_date|date:"M d" }}<br>
+            {{ date.show_date|date:"Y" }}
+        </a>
+    {% empty %}
+        <p>No Dates Available.</p>
+    {% endfor %}
+</div>
+
+<hr>
+
+{% for theater, shows in grouped_shows %}
+
+    <h3>{{ theater.theater_name }}</h3>
+
+    {% for show in shows %}
+    <button onclick="window.location.href='{% url 'seats' show.id %}'">
+    {{ show.show_time|time:"g:i A" }}
+    </button>
+
+    {% endfor %}
+
+    <hr>
+
+{% empty %}
+    <p>No theaters available for this date.</p>
+{% endfor %}
+
+</body>
+
+<style>
+.dates{
+    display:flex;
+    gap:15px;
+    margin:20px 0;
+}
+
+.dates a{
+    width:70px;
+    height:70px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    border:1px solid #ccc;
+    border-radius:10px;
+    color:black;
+    font-weight:bold;
+}
+
+.dates a:hover{
+    background:#f84464;
+    color:white;
+}
+.dates a:active {
+    background: #f8f8f8;
+    color: white;
+}
+</style>
+
+</html>

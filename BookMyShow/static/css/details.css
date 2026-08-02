@@ -1,0 +1,155 @@
+/* Banner */
+.banner {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Dark overlay */
+.banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+        rgba(0,0,0,0.85),
+        rgba(0,0,0,0.15));
+}
+
+/* Movie Details */
+.banner-text {
+    position: absolute;
+    left: 40px;
+    bottom: 35px;
+    z-index: 2;
+    color: white;
+    max-width: 70%;
+}
+
+.banner-text h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.banner-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.banner-meta span {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Trailer Button */
+.trailer-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 22px;
+    background: #f84464;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.trailer-btn:hover {
+    background: #d81b4e;
+}
+
+/* Movie Information */
+.movie-info {
+    padding: 20px;
+}
+
+.movie-info h2 {
+    margin-bottom: 10px;
+}
+
+.movie-info p {
+    line-height: 1.7;
+}
+
+/* Cast */
+.cast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.cast-item {
+    text-align: center;
+}
+
+.cast-item img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #eee;
+}
+
+.cast-name {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #222;
+}
+
+.cast-role {
+    font-size: 13px;
+    color: #666;
+}
+
+.gallery {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px;
+}
+
+.gallery img {
+    width: 250px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.book-ticket-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.book-ticket-btn a {
+    display: inline-block;
+    padding: 14px 35px;
+    background: #f84464;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.book-ticket-btn a:hover {
+    background: #d81b4e;
+}

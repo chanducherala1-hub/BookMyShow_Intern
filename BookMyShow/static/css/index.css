@@ -1,0 +1,18 @@
+.movie{
+    padding: 20px;
+    cursor: pointer; 
+    display: inline-block;
+ 
+}
+
+.movie:hover {
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
+.img{
+    border: 1px solid;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 250px;
+}

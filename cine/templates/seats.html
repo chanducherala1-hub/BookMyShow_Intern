@@ -1,0 +1,226 @@
+
+<h1>Select Your Seats</h1>
+
+<form id="seatForm" method="POST" action="{% url 'lock_seats' show.id %}">
+
+    {% csrf_token %}
+
+    <div class="seat-layout">
+
+        {% for seat in seats %}
+
+    {% if seat.id in booked_seat_ids %}
+
+        <button
+            type="button"
+            class="seat booked"
+            data-id="{{ seat.seat_number }}"
+            disabled
+        >
+            {{ seat.seat_number }}
+        </button>
+
+    {% elif seat.id in locked_seat_ids %}
+
+        <button
+            type="button"
+            class="seat locked"
+            data-id="{{ seat.seat_number }}"
+            disabled
+        >
+            {{ seat.seat_number }}
+        </button>
+
+    {% else %}
+
+        <button
+            type="button"
+            class="seat"
+            data-id="{{ seat.seat_number }}"
+        >
+            {{ seat.seat_number }}
+        </button>
+
+    {% endif %}
+
+{% endfor %}
+</div>
+
+    <h3>Selected Seats:</h3>
+
+    <div id="selectedSeats">
+        None
+    </div>
+
+    <input
+        type="hidden"
+        name="selected_seats"
+        id="selectedSeatsInput">
+    <b id="seatError" style="color: red; margin-right:500px;"></b>
+    <button type="submit" class="continue-btn" >
+        Continue
+    </button>
+</form>
+
+<script>
+
+    let selectedSeats = [];
+
+    const seatButtons = document.querySelectorAll(".seat");
+
+    const selectedDiv = document.getElementById("selectedSeats");
+
+    const hiddenInput = document.getElementById("selectedSeatsInput");
+
+    seatButtons.forEach(function(button) {
+
+        button.addEventListener("click", function() {
+
+            let seatId = this.dataset.id;
+
+            if (selectedSeats.includes(seatId)) {
+
+                selectedSeats = selectedSeats.filter(
+                    seat => seat !== seatId
+                );
+
+                this.classList.remove("selected");
+
+            } else {
+
+                selectedSeats.push(seatId);
+
+                this.classList.add("selected");
+
+            }
+
+            if (selectedSeats.length === 0) {
+
+                selectedDiv.innerHTML = "None";
+
+            } else {
+
+                selectedDiv.innerHTML = selectedSeats.join(", ");
+
+            }
+
+            hiddenInput.value = selectedSeats.join(",");
+
+        });
+
+    });
+    document.getElementById("seatForm").addEventListener("submit", function (event) {
+
+    const error = document.getElementById("seatError");
+
+    if (selectedSeats.length === 0) {
+
+        event.preventDefault();
+
+        error.innerHTML = "Please select at least one seat.";
+
+        return false;
+    }
+
+    error.innerHTML = "";
+});
+</script>
+
+<style>
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .seat-layout {
+
+        display: grid;
+
+        grid-template-columns: repeat(10, 60px);
+
+        gap: 10px;
+
+        justify-content: center;
+
+        margin-bottom: 30px;
+    }
+    .seatError{
+        margin-right: 500px;
+    }
+    .seat {
+
+        width: 50px;
+
+        height: 50px;
+
+        border: 1px solid #ccc;
+
+        border-radius: 8px;
+
+        background: white;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        transition: 0.2s;
+    }
+
+    .seat:hover {
+
+        background: #f0f0f0;
+
+    }
+    .locked {
+    background-color: red;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+    }
+
+    .selected {
+
+        background: green;
+
+        color: white;
+
+    }
+
+    #selectedSeats {
+
+        text-align: center;
+
+        font-size: 20px;
+
+        margin-bottom: 20px;
+    }
+
+    .continue-btn {
+
+        display: block;
+
+        margin: 0 auto;
+
+        padding: 10px 25px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #f84464;
+
+        color: white;
+
+        font-size: 16px;
+
+        cursor: pointer;
+    }
+
+    .continue-btn:hover {
+
+        opacity: 0.9;
+
+    }
+
+</style>

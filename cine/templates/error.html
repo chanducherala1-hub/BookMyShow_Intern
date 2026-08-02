@@ -1,0 +1,52 @@
+
+
+<style>
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #f84464;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background: #d73754;
+}
+.error-box {
+    width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff3f3;
+    border: 1px solid red;
+    border-radius: 10px;
+}
+
+.error-box button {
+    padding: 10px 20px;
+    border: none;
+    background: #f84464;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.error-box button:hover {
+    background: #d73754;
+}
+
+</style>
+
+<div class="error-box">
+
+    <h2>Error</h2>
+
+    <p>{{ message }}</p>
+
+    <a href="/" class="back-btn">
+        <button>Go Back</button>
+    </a>
+
+</div>
+

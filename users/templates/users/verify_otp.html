@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="con">
+        <h3>Verify Email OTP</h3>
+        <p style="font-size: 14px; margin-bottom: 15px;">
+            We sent a 6-digit OTP to <strong>{{ email }}</strong>
+        </p>
+
+        <form action="{% url 'verify_otp' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="otp" placeholder="Enter OTP" required class="pn" maxlength="6">
+            <input type="submit" value="Verify OTP" class="sub">
+        </form>
+
+        <br>
+        <a href="{% url 'register' %}" style="text-decoration: none;">Back to Registration</a>
+
+        <script>
+            {% for message in messages %}
+                alert("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    </div>
+</body>
+</html>

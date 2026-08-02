@@ -1,0 +1,23 @@
+.bar{
+    width: 100%;
+    background-color: rgb(251, 251, 251);
+    height: 75px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}   
+.reg{
+    margin-right: 50px;
+    margin-left: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+    color: black;   
+}
+.reg:hover{
+    color:rgb(0, 60, 255)
+}
+.reg:active{
+    color:black;
+}
