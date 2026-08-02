@@ -149,10 +149,6 @@ def book_seats(request, show_id):
         movie_id=booking.show.movie.id
     )
 
-
-
-
-
 @login_required
 def add_review(request, movie_id):
 
