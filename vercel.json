@@ -1,16 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "BookMyShow/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "BookMyShow/wsgi.py"
+      "source": "/(.*)",
+      "destination": "/api/index.py"
     }
   ]
 }
