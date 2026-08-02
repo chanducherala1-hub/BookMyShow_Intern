@@ -1,4 +1,4 @@
-﻿arabic-reshaper==3.0.1
+arabic-reshaper==3.0.1
 asgiref==3.11.1
 asn1crypto==1.5.1
 certifi==2026.6.17
