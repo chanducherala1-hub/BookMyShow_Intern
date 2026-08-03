@@ -94,35 +94,20 @@ def books(request, movie_id):
     })
 
 def seats(request, show_id):
-
     show = get_object_or_404(Show, id=show_id)
 
-    seats = Seat.objects.filter(
-        screen=show.screen
-    ).order_by("id")
+    print("Show:", show.id)
+    print("Screen:", show.screen)
 
-    locked_seat_ids = SeatLock.objects.filter(
-        show=show,
-        is_active=True,
-        expires_at__gt=timezone.now()
-    ).values_list(
-        "seat_id",
-        flat=True
-    )
+    seats = Seat.objects.filter(screen=show.screen)
 
-    booked_seat_ids = Seat.objects.filter(
-        bookings__show=show,
-        bookings__payment_status="Success"
-    ).values_list(
-        "id",
-        flat=True
-    )
+    print("Total seats:", seats.count())
 
     return render(request, "seats.html", {
         "show": show,
         "seats": seats,
-        "locked_seat_ids": list(locked_seat_ids),
-        "booked_seat_ids": list(booked_seat_ids),
+        "locked_seat_ids": [],
+        "booked_seat_ids": [],
     })
 
 def book_seats(request, show_id):
