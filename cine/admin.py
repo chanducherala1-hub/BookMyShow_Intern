@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db.models import Sum
-from .models import Genre, Language, CastMember, Movie, MovieImage, Screen, Show, Theater, Order, Booking
+from .models import Genre, Language, CastMember, Movie, MovieImage, Screen, Seat, Show, Theater, Order, Booking
 
 admin.site.register([
     Genre,
@@ -11,6 +11,7 @@ admin.site.register([
     Theater,
     Show,
     Screen,
+    Seat,
 ])
 
 @admin.register(Order)

@@ -6,7 +6,7 @@
     {% csrf_token %}
 
     <div class="seat-layout">
-
+        
         {% for seat in seats %}
 
     {% if seat.id in booked_seat_ids %}

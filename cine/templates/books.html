@@ -4,77 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Tickets</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f5f5f5;
+            padding:30px;
+        }
+
+        .container{
+            max-width:1100px;
+            margin:auto;
+        }
+
+        .movie-card{
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 12px rgba(0,0,0,.1);
+            margin-bottom:30px;
+        }
+
+        .movie-title{
+            font-size:35px;
+            margin-bottom:10px;
+            color:#222;
+        }
+
+        .runtime{
+            color:#666;
+            font-size:18px;
+        }
+
+        h2{
+            margin:25px 0 15px;
+            color:#333;
+        }
+
+        .dates{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .dates a{
+            width:90px;
+            height:90px;
+            text-decoration:none;
+            border-radius:10px;
+            background:white;
+            border:1px solid #ddd;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            color:#222;
+            font-weight:bold;
+            transition:.3s;
+        }
+
+        .dates a:hover{
+            background:#f84464;
+            color:white;
+            transform:translateY(-3px);
+        }
+
+        .theater-card{
+            background:white;
+            margin-top:30px;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .theater-name{
+            font-size:22px;
+            margin-bottom:15px;
+        }
+
+        .shows{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .show-btn{
+            background:white;
+            color:#16a34a;
+            border:2px solid #16a34a;
+            padding:12px 20px;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            transition:.3s;
+        }
+
+        .show-btn:hover{
+            background:#16a34a;
+            color:white;
+        }
+
+        .message{
+            margin-top:25px;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            color:#555;
+            text-align:center;
+            font-size:18px;
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-{% for movie in movies %}
-    <h2>{{ movie.title }}</h2>
-    <h4>Movie Runtime: {{ movie.duration_minutes }} mins</h4>
-{% endfor %}
+<div class="container">
 
-<hr>
+    <div class="movie-card">
 
-<div class="dates">
-    {% for date in available_dates %}
-        <a href="?date={{ date.show_date|date:'Y-m-d' }}">
-            {{ date.show_date|date:"M d" }}<br>
-            {{ date.show_date|date:"Y" }}
-        </a>
-    {% empty %}
-        <p>No Dates Available.</p>
-    {% endfor %}
+        <h1 class="movie-title">{{ movie.title }}</h1>
+
+        <p class="runtime">
+            Runtime : {{ movie.duration_minutes }} mins
+        </p>
+
+    </div>
+
+
+    <h2>Select Date</h2>
+
+    <div class="dates">
+
+        {% for date in available_dates %}
+
+            <a href="?date={{ date.show_date|date:'Y-m-d' }}">
+                {{ date.show_date|date:"M d" }}<br>
+                {{ date.show_date|date:"Y" }}
+            </a>
+
+        {% empty %}
+
+            <p>No Dates Available.</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% if request.GET.date %}
+
+        {% for theater, shows in grouped_shows %}
+
+            <div class="theater-card">
+
+                <h3 class="theater-name">
+                    {{ theater.theater_name }}
+                </h3>
+
+                <div class="shows">
+
+                    {% for show in shows %}
+
+                        <button
+                            class="show-btn"
+                            onclick="location.href='{% url 'seats' show.id %}'">
+
+                            {{ show.show_time|time:"g:i A" }}
+
+                        </button>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="message">
+                No shows available for this date.
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="message">
+            Please select a date to view available show timings.
+        </div>
+
+    {% endif %}
+
 </div>
 
-<hr>
-
-{% for theater, shows in grouped_shows %}
-
-    <h3>{{ theater.theater_name }}</h3>
-
-    {% for show in shows %}
-    <button onclick="window.location.href='{% url 'seats' show.id %}'">
-    {{ show.show_time|time:"g:i A" }}
-    </button>
-
-    {% endfor %}
-
-    <hr>
-
-{% empty %}
-    <p>No theaters available for this date.</p>
-{% endfor %}
-
 </body>
-
-<style>
-.dates{
-    display:flex;
-    gap:15px;
-    margin:20px 0;
-}
-
-.dates a{
-    width:70px;
-    height:70px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-decoration:none;
-    border:1px solid #ccc;
-    border-radius:10px;
-    color:black;
-    font-weight:bold;
-}
-
-.dates a:hover{
-    background:#f84464;
-    color:white;
-}
-.dates a:active {
-    background: #f8f8f8;
-    color: white;
-}
-</style>
-
 </html>

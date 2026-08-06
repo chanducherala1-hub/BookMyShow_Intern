@@ -66,16 +66,15 @@ def books(request, movie_id):
 
     selected_date = request.GET.get("date")
 
+    shows = Show.objects.none()
+
     if selected_date:
         shows = Show.objects.filter(
             movie=movie,
             show_date=selected_date
-        ).select_related("screen__theater")
-    else:
-        shows = Show.objects.filter(
-            movie=movie,
-            show_date__gte=timezone.localdate()
-        ).select_related("screen__theater")
+        ).select_related(
+            "screen__theater"
+        )
 
     available_dates = Show.objects.filter(
         movie=movie,
@@ -93,23 +92,70 @@ def books(request, movie_id):
         "grouped_shows": grouped_shows.items(),
     })
 
+from django.utils import timezone
+
+@login_required
 def seats(request, show_id):
+
     show = get_object_or_404(Show, id=show_id)
 
-    print("Show:", show.id)
-    print("Screen:", show.screen)
+    # Remove expired locks
+    SeatLock.objects.filter(
+        expires_at__lt=timezone.now()
+    ).delete()
 
-    seats = Seat.objects.filter(screen=show.screen)
+    seats = Seat.objects.filter(
+        screen=show.screen
+    ).order_by("seat_number")
 
-    print("Total seats:", seats.count())
+    # Show locks of OTHER users only
+    locked_seat_ids = list(
 
-    return render(request, "seats.html", {
-        "show": show,
-        "seats": seats,
-        "locked_seat_ids": [],
-        "booked_seat_ids": [],
+        SeatLock.objects.filter(
+
+            show=show,
+
+            expires_at__gt=timezone.now(),
+
+            is_active=True
+
+        ).exclude(
+
+            user=request.user
+
+        ).values_list(
+            "seat_id",
+            flat=True
+        )
+
+    )
+
+    booked_seat_ids = list(
+
+        Booking.objects.filter(
+
+            show=show,
+
+            payment_status="Success"
+
+        ).values_list(
+            "seats__id",
+            flat=True
+        )
+
+    )
+
+    return render(request,"seats.html",{
+
+        "show":show,
+
+        "seats":seats,
+
+        "locked_seat_ids":locked_seat_ids,
+
+        "booked_seat_ids":booked_seat_ids,
+
     })
-
 def book_seats(request, show_id):
 
     if request.method == "POST":
@@ -200,94 +246,110 @@ def add_review(request, movie_id):
 @login_required
 def lock_seats(request, show_id):
 
-    print("lock_seats called")
+    if request.method != "POST":
+        return HttpResponse("Invalid Request")
 
-    if request.method == "POST":
+    show = get_object_or_404(Show,id=show_id)
 
-        selected_seats = request.POST.get("selected_seats")
+    selected = request.POST.get("selected_seats","")
 
-        print("Selected seats:", selected_seats)
+    if not selected:
+        return HttpResponse("No seats selected")
 
-        seat_numbers = [
-            seat.strip()
-            for seat in selected_seats.split(",")
-        ]
+    seat_numbers = [x.strip() for x in selected.split(",")]
 
-        print("Seat numbers:", seat_numbers)
+    request.session["show_id"] = show.id
+    request.session["selected_seats"] = seat_numbers
 
-        show = get_object_or_404(
-            Show,
-            id=show_id
+    # Remove old locks of this user
+    SeatLock.objects.filter(
+
+        user=request.user,
+
+        show=show,
+
+        is_active=True
+
+    ).delete()
+
+    booking, created = Booking.objects.get_or_create(
+
+        user=request.user,
+
+        show=show,
+
+        payment_status="Pending",
+
+        defaults={
+            "total_amount":0
+        }
+
+    )
+
+    booking.seats.clear()
+
+    for seat_number in seat_numbers:
+
+        seat = get_object_or_404(
+
+            Seat,
+
+            seat_number=seat_number,
+
+            screen=show.screen
+
         )
 
-        print("Show:", show)
+        # Check lock from OTHER users
+        locked = SeatLock.objects.filter(
 
-        request.session["show_id"] = show_id
-        request.session["selected_seats"] = seat_numbers
-
-        booking = Booking.objects.create(
-            user=request.user,
             show=show,
-            total_amount=0
-        )
-        for seat_number in seat_numbers:
-            seat = Seat.objects.get(
-                seat_number=seat_number,
-                screen=show.screen
+
+            seat=seat,
+
+            expires_at__gt=timezone.now(),
+
+            is_active=True
+
+        ).exclude(
+
+            user=request.user
+
+        ).exists()
+
+        if locked:
+
+            return HttpResponse(
+                f"{seat.seat_number} already locked"
             )
 
-            booking.seats.add(seat)
+        SeatLock.objects.create(
 
-        for seat_number in seat_numbers:
+            user=request.user,
 
-            try:
+            show=show,
 
-                seat = Seat.objects.get(
-                    seat_number=seat_number,
-                    screen=show.screen
-                )
+            seat=seat,
 
-            except Seat.DoesNotExist:
+            locked_at=timezone.now(),
 
-                print(
-                    f"Seat '{seat_number}' does not exist "
-                    f"for screen {show.screen.id}"
-                )
+            expires_at=timezone.now()+timedelta(minutes=2),
 
-                continue
+            is_active=True
 
-            existing_lock = SeatLock.objects.filter(
-                show=show,
-                seat=seat,
-                is_active=True,
-                expires_at__gt=timezone.now()
-            ).exists()
-
-            if existing_lock:
-
-                return HttpResponse(
-                    "Seat already locked"
-                )
-
-            SeatLock.objects.create(
-                user=request.user,
-                show=show,
-                seat=seat,
-                locked_at=timezone.now(),
-                expires_at=timezone.now() + timedelta(minutes=2),
-                is_active=True
-            )
-
-            booking.seats.add(seat)
-
-        request.session["booking_id"] = booking.id
-
-        return redirect(
-            "payments",
-            movie_id=show.movie.id
         )
 
-    return HttpResponse("Invalid request")
+        booking.seats.add(seat)
+
+    request.session["booking_id"]=booking.id
+
+    return redirect(
+
+        "payments",
+
+        movie_id=show.movie.id
+
+    )
 
 @login_required
 def payment(request, movie_id):
@@ -410,10 +472,16 @@ def payment_success(request):
     booking.booking_status = "Confirmed"
     booking.total_amount = order.amount
     booking.save()
+    SeatLock.objects.filter(
+
+        user=request.user,
+
+        show=booking.show
+
+    ).delete()
     for seat in booking.seats.all():
         seat.is_booked = True
         seat.save()
-
     print(booking.seats.all())
     for seat in booking.seats.all():
 
