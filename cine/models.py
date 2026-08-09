@@ -136,10 +136,19 @@ class Show(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} - {self.show_date} @ {self.show_time}"
+
+    
 class Seat(models.Model):
-    screen = models.ForeignKey(Screen,on_delete=models.CASCADE, related_name="seats")
-    seat_number=models.CharField(max_length=5)
-    is_booked=models.BooleanField(default=False)
+    screen = models.ForeignKey(
+        Screen,
+        on_delete=models.CASCADE,
+        related_name="seats"
+    )
+
+    seat_number = models.CharField(max_length=5)
+
+    is_booked = models.BooleanField(default=False)
+
     def __str__(self):
         return self.seat_number
 

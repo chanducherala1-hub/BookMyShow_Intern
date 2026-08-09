@@ -97,65 +97,79 @@ from django.utils import timezone
 @login_required
 def seats(request, show_id):
 
-    show = get_object_or_404(Show, id=show_id)
+    show = get_object_or_404(
+        Show,
+        id=show_id
+    )
 
     # Remove expired locks
     SeatLock.objects.filter(
-        expires_at__lt=timezone.now()
-    ).delete()
+        expires_at__lt=timezone.now(),
+        is_active=True
+    ).update(
+        is_active=False
+    )
 
+    # Get seats belonging to this screen
+    # order_by("id") keeps their original position
     seats = Seat.objects.filter(
         screen=show.screen
-    ).order_by("seat_number")
+    ).order_by("id")
 
-    # Show locks of OTHER users only
+    # Seats locked by OTHER users
     locked_seat_ids = list(
-
         SeatLock.objects.filter(
-
             show=show,
-
             expires_at__gt=timezone.now(),
-
             is_active=True
-
-        ).exclude(
-
+        )
+        .exclude(
             user=request.user
-
-        ).values_list(
+        )
+        .values_list(
             "seat_id",
             flat=True
         )
-
     )
 
+    # Seats already booked for THIS SHOW
     booked_seat_ids = list(
-
         Booking.objects.filter(
-
             show=show,
-
             payment_status="Success"
-
-        ).values_list(
+        )
+        .values_list(
             "seats__id",
             flat=True
         )
-
     )
 
-    return render(request,"seats.html",{
+    # Seats locked by CURRENT USER
+    my_locked_seat_ids = list(
+        SeatLock.objects.filter(
+            show=show,
+            user=request.user,
+            expires_at__gt=timezone.now(),
+            is_active=True
+        )
+        .values_list(
+            "seat_id",
+            flat=True
+        )
+    )
 
-        "show":show,
+    return render(
+        request,
+        "seats.html",
+        {
+            "show": show,
+            "seats": seats,
+            "locked_seat_ids": locked_seat_ids,
+            "booked_seat_ids": booked_seat_ids,
+            "my_locked_seat_ids": my_locked_seat_ids,
+        }
+    )
 
-        "seats":seats,
-
-        "locked_seat_ids":locked_seat_ids,
-
-        "booked_seat_ids":booked_seat_ids,
-
-    })
 def book_seats(request, show_id):
 
     if request.method == "POST":
@@ -429,7 +443,17 @@ def payment(request, movie_id):
         "razorpay_callback_url": settings.RAZORPAY_CALLBACK_URL,
 
     }
+    print(
+        "RAZORPAY KEY:",
+        settings.RAZORPAY_KEY_ID[:10]
+        if settings.RAZORPAY_KEY_ID
+        else "EMPTY"
+    )
 
+    print(
+        "RAZORPAY SECRET CONFIGURED:",
+        bool(settings.RAZORPAY_KEY_SECRET)
+    )
     return render(
         request,
         "payment.html",
