@@ -24,7 +24,11 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '*'
 ]
-
+SITE_URL = config(
+    "SITE_URL",
+    default="http://127.0.0.1:8000"
+)
+LOGIN_URL = 'login'
 # Application definition
 INSTALLED_APPS = [
     'cloudinary_storage',

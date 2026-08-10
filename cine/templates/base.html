@@ -6,6 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookMyShow</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    
+    <style>
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 350px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #f84464;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #d73754;
+        }   
+    </style>
 </head>
 <body>
 
@@ -13,46 +43,31 @@
         {% if user.is_authenticated %}
             <h3>Welcome, {{ user.full_name }}</h3>
             <a href="{% url 'logout' %}" class="reg">Logout</a>
+            <br><br>
+            <a href="{% url 'change_password' %}" class="reg" style="text-decoration: underline;">
+                Change Password
+            </a>
         {% else %}
             <a href="{% url 'register' %}" class="reg">Register</a>
             <a href="{% url 'login' %}" class="reg">Login</a>
+            <br>
         {% endif %}
     </div>
+
     <form method="get" action="/search" class="search-box">
         <input class="" type="search" placeholder="Search" aria-label="Search" name="search" id="search">
-        <button class="" type="submit" >Search</button>
+        <button class="" type="submit">Search</button>
     </form>
+
     {% block content %}
     {% endblock %}
 
+    <!-- Displays flash messages (such as "Login successful!") as JavaScript popup alerts -->
+    <script>
+        {% for message in messages %}
+            alert("{{ message|escapejs }}");
+        {% endfor %}
+    </script>
+
 </body>
 </html>
-<style>
-    .search-box {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.search-box input {
-    width: 350px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.search-box button {
-    padding: 10px 20px;
-    margin-left: 10px;
-    background-color: #f84464;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.search-box button:hover {
-    background-color: #d73754;
-}   
-</style>

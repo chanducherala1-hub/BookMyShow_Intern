@@ -147,21 +147,8 @@
         ✓ Verified Viewer
     </span>
 {% endif %}
-<h2>Similar Movies</h2>
 
-<div class="movie-row">
 
-    {% for movie in similar_movies %}
-
-        <a href="{% url 'details' movie.id %}">
-
-            {{ movie.title }}
-
-        </a>
-
-    {% endfor %}
-
-</div>
 <a href="{% url 'add_review' movie.id %}">
     <button class="review-btn">Add Review</button>
 </a>

@@ -1,33 +1,193 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
+
 <body>
-    <div class="con">
-        <h3>Verify Email OTP</h3>
-        <p style="font-size: 14px; margin-bottom: 15px;">
-            We sent a 6-digit OTP to <strong>{{ email }}</strong>
-        </p>
 
-        <form action="{% url 'verify_otp' %}" method="POST">
-            {% csrf_token %}
-            <input type="text" name="otp" placeholder="Enter OTP" required class="pn" maxlength="6">
-            <input type="submit" value="Verify OTP" class="sub">
-        </form>
+<div class="con">
 
-        <br>
-        <a href="{% url 'register' %}" style="text-decoration: none;">Back to Registration</a>
+    <h3>Verify Email OTP</h3>
 
-        <script>
-            {% for message in messages %}
-                alert("{{ message|escapejs }}");
-            {% endfor %}
-        </script>
+    <p class="subtitle">
+        We sent a 6-digit OTP to<br>
+        <strong>{{ email }}</strong>
+    </p>
+
+    <form
+        action="{% url 'verify_otp' %}"
+        method="POST"
+    >
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="otp"
+            placeholder="Enter 6-Digit OTP"
+            required
+            maxlength="6"
+            pattern="\d{6}"
+            class="pn"
+            style="text-align: center; letter-spacing: 4px; font-weight: 600;"
+        >
+
+        <input
+            type="submit"
+            value="Verify OTP"
+            class="sub"
+        >
+    </form>
+
+    <div>
+        <a href="{% url 'register' %}">
+            ← Back to Registration
+        </a>
     </div>
+
+    <!-- Handles backend alerts (e.g., Invalid OTP, Expired OTP, Success) -->
+    <script>
+        {% for message in messages %}
+            alert("{{ message|escapejs }}");
+        {% endfor %}
+    </script>
+
+</div>
+
 </body>
+<style>
+    /* Reset and global layout settings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 20px;
+}
+
+/* Central Form Card Container */
+.con {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Header Styling */
+.con h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+/* Subtitle/Instructional text */
+.con p.subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+/* Form Layout */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Input Fields (.pn) */
+.pn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: #334155;
+    background-color: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.pn::placeholder {
+    color: #94a3b8;
+}
+
+.pn:focus {
+    background-color: #ffffff;
+    border-color: #f84464;
+    box-shadow: 0 0 0 4px rgba(248, 68, 100, 0.15);
+}
+
+/* Submit Button (.sub) */
+.sub {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #f84464;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(248, 68, 100, 0.3);
+}
+
+.sub:hover {
+    background-color: #d73754;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(248, 68, 100, 0.4);
+}
+
+.sub:active {
+    transform: translateY(0);
+}
+
+/* Bottom Navigation Links */
+.con a {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.con a:hover {
+    color: #f84464;
+    text-decoration: underline;
+}
+
+/* Responsive Scaling */
+@media (max-width: 480px) {
+    .con {
+        padding: 30px 20px;
+    }
+
+    .con h3 {
+        font-size: 22px;
+    }
+}
+</style>
 </html>

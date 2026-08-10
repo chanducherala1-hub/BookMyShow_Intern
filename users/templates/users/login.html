@@ -1,45 +1,201 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login page</title>
+    <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
+
 <body>
-    <div class="con">
-        <h3>Login</h3>
 
-        {% if not otp_sent %}
-            <form action="{% url 'login' %}" method="POST">
-                {% csrf_token %}
-                <input type="email" name="email" placeholder="Enter Email" required class="pn"><br>
-                <input type="submit" name="send_otp" value="Send OTP" class="sub">
-            </form>
+<div class="con">
 
-        {% else %}
-            <p style="font-size: 13px; margin-bottom: 10px;">OTP sent to <strong>{{ email }}</strong></p>
-            <form action="{% url 'login' %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="email" value="{{ email }}">
-                <input type="text" name="otp" placeholder="Enter 6-digit OTP" required class="pn" maxlength="6"><br>
-                <input type="submit" name="verify_otp" value="Login" class="sub">
-            </form>
+    <h3>Welcome Back</h3>
+    <p class="subtitle">Please enter your credentials to log in.</p>
 
-        {% endif %}
+    <form
+        action="{% url 'login' %}"
+        method="POST"
+    >
+        {% csrf_token %}
 
-        <div style="margin-top: 15px;">
-            <a href="{% url 'register' %}" style="text-decoration: none;">Don't Have Account?</a>
-        </div>
+        <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            required
+            class="pn"
+        >
 
-        <div>
-            <script>
-                {% for message in messages %}
-                    alert("{{ message|escapejs }}");
-                {% endfor %}
-            </script>    
-        </div>
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            class="pn"
+        >
+
+        <input
+            type="submit"
+            value="Login"
+            class="sub"
+        >
+    </form>
+
+    <div>
+        <a href="{% url 'forgot_password' %}">
+            Forgot Password?
+        </a>
     </div>
+
+    <div>
+        <a href="{% url 'register' %}">
+            Don't Have An Account? Register
+        </a>
+    </div>
+
+    <!-- Catches and alerts invalid login errors before leaving the page -->
+    <script>
+        {% for message in messages %}
+            alert("{{ message|escapejs }}");
+        {% endfor %}
+    </script>
+
+</div>
+
 </body>
+<style>
+    /* Reset and global layout settings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 20px;
+}
+
+/* Central Form Card Container */
+.con {
+    background: #ffffff;
+    width: 100%;
+    height: 500px;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Header Styling */
+.con h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+/* Subtitle/Instructional text */
+.con p.subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+/* Form Layout */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Input Fields (.pn) */
+.pn {
+    width: 400px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: #334155;
+    background-color: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.pn::placeholder {
+    color: #94a3b8;
+}
+
+.pn:focus {
+    background-color: #ffffff;
+    border-color: #f84464;
+    box-shadow: 0 0 0 4px rgba(248, 68, 100, 0.15);
+}
+
+/* Submit Button (.sub) */
+.sub {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #f84464;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(248, 68, 100, 0.3);
+}
+
+.sub:hover {
+    background-color: #d73754;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(248, 68, 100, 0.4);
+}
+
+.sub:active {
+    transform: translateY(0);
+}
+
+/* Bottom Navigation Links */
+.con a {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.con a:hover {
+    color: #f84464;
+    text-decoration: underline;
+}
+
+/* Responsive Scaling */
+@media (max-width: 480px) {
+    .con {
+        padding: 30px 20px;
+    }
+
+    .con h3 {
+        font-size: 22px;
+    }
+}
+</style>
 </html>
