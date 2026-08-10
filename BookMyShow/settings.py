@@ -137,6 +137,12 @@ STORAGES = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Razorpay Integration
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='')
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='')
-RAZORPAY_CALLBACK_URL = config('RAZORPAY_CALLBACK_URL', default='http://127.0.0.1:8000/payment-verify/')
+
+
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET")
+
+RAZORPAY_CALLBACK_URL = config(
+    "RAZORPAY_CALLBACK_URL",
+    default="http://127.0.0.1:8000/payment-verify/"
+)

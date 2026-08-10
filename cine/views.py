@@ -275,7 +275,6 @@ def lock_seats(request, show_id):
     request.session["show_id"] = show.id
     request.session["selected_seats"] = seat_numbers
 
-    # Remove old locks of this user
     SeatLock.objects.filter(
 
         user=request.user,
@@ -365,14 +364,15 @@ def lock_seats(request, show_id):
 
     )
 
+
 @login_required
 def payment(request, movie_id):
+
+    # your existing code...
     Order.objects.filter(
         payment_status="Pending",
         created_at__lt=timezone.now() - timedelta(minutes=10)
     ).delete()
-    print(settings.RAZORPAY_KEY_ID)
-    print(settings.RAZORPAY_KEY_SECRET)
 
     show_id = request.session.get("show_id")
 
@@ -403,14 +403,30 @@ def payment(request, movie_id):
 
     amount = len(selected_seats) * show.ticket_price
 
+    print("========== RAZORPAY DEBUG ==========")
+    print("KEY EXISTS:", bool(settings.RAZORPAY_KEY_ID))
+    print(
+        "KEY PREFIX:",
+        settings.RAZORPAY_KEY_ID[:10]
+        if settings.RAZORPAY_KEY_ID
+        else "EMPTY"
+    )
+    print(
+        "SECRET EXISTS:",
+        bool(settings.RAZORPAY_KEY_SECRET)
+    )
+    print(
+        "SECRET LENGTH:",
+        len(settings.RAZORPAY_KEY_SECRET)
+        if settings.RAZORPAY_KEY_SECRET
+        else 0
+    )
+    print("====================================")
+
     razorpay_order = client.order.create({
-
         "amount": int(amount * 100),
-
         "currency": "INR",
-
         "payment_capture": 1
-
     })
     print(razorpay_order)
 
