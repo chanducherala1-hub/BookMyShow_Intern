@@ -103,7 +103,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='chanducherala1@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='xvqq rkfo mxqy wakn')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = f'BookMyShow <{EMAIL_HOST_USER}>'
 
 # Internationalization
@@ -116,7 +116,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media Files & Cloudinary Settings
 MEDIA_URL = '/media/'
@@ -129,12 +128,14 @@ CLOUDINARY_STORAGE = {
 }
 
 # Storage backends configuration for Django 4.2+ & 6.x
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
@@ -143,8 +144,8 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Razorpay Integration
 
 
-RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET")
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID", default="")
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET", default="")
 
 RAZORPAY_CALLBACK_URL = config(
     "RAZORPAY_CALLBACK_URL",
