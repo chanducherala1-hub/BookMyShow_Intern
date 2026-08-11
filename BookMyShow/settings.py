@@ -152,3 +152,6 @@ RAZORPAY_CALLBACK_URL = config(
     "RAZORPAY_CALLBACK_URL",
     default="http://127.0.0.1:8000/payment-verify/"
 )
+
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='chanducherala1@gmail.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='xvqq rkfo mxqy wakn')

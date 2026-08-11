@@ -263,107 +263,108 @@ def lock_seats(request, show_id):
     if request.method != "POST":
         return HttpResponse("Invalid Request")
 
-    show = get_object_or_404(Show,id=show_id)
+    show = get_object_or_404(
+        Show,
+        id=show_id
+    )
 
-    selected = request.POST.get("selected_seats","")
+    selected = request.POST.get("selected_seats", "")
 
     if not selected:
         return HttpResponse("No seats selected")
 
-    seat_numbers = [x.strip() for x in selected.split(",")]
+    seat_numbers = [
+        x.strip()
+        for x in selected.split(",")
+        if x.strip()
+    ]
+
+    if not seat_numbers:
+        return HttpResponse("No seats selected")
 
     request.session["show_id"] = show.id
     request.session["selected_seats"] = seat_numbers
 
+    # Remove user's old active locks for this show
     SeatLock.objects.filter(
-
         user=request.user,
-
         show=show,
-
         is_active=True
-
     ).delete()
 
-    booking, created = Booking.objects.get_or_create(
-
+    # Get existing pending booking
+    booking = Booking.objects.filter(
         user=request.user,
-
         show=show,
+        payment_status="Pending"
+    ).order_by("-id").first()
 
-        payment_status="Pending",
+    # Create booking if none exists
+    if booking is None:
+        booking = Booking.objects.create(
+            user=request.user,
+            show=show,
+            payment_status="Pending",
+            total_amount=0
+        )
 
-        defaults={
-            "total_amount":0
-        }
-
-    )
-
+    # Remove previously selected seats
     booking.seats.clear()
 
+    # Check and lock selected seats
     for seat_number in seat_numbers:
 
         seat = get_object_or_404(
-
             Seat,
-
             seat_number=seat_number,
-
             screen=show.screen
-
         )
 
-        # Check lock from OTHER users
+        # Check if another user has locked this seat
         locked = SeatLock.objects.filter(
-
             show=show,
-
             seat=seat,
-
             expires_at__gt=timezone.now(),
-
             is_active=True
-
         ).exclude(
-
             user=request.user
-
         ).exists()
 
         if locked:
-
             return HttpResponse(
-                f"{seat.seat_number} already locked"
+                f"{seat.seat_number} is already locked by another user."
             )
 
-        SeatLock.objects.create(
-
-            user=request.user,
-
+        # Check if already successfully booked for this show
+        already_booked = Booking.objects.filter(
             show=show,
+            payment_status="Success",
+            seats=seat
+        ).exists()
 
+        if already_booked:
+            return HttpResponse(
+                f"{seat.seat_number} is already booked."
+            )
+
+        # Create temporary lock
+        SeatLock.objects.create(
+            user=request.user,
+            show=show,
             seat=seat,
-
             locked_at=timezone.now(),
-
-            expires_at=timezone.now()+timedelta(minutes=2),
-
+            expires_at=timezone.now() + timedelta(minutes=2),
             is_active=True
-
         )
 
         booking.seats.add(seat)
 
-    request.session["booking_id"]=booking.id
+    request.session["booking_id"] = booking.id
 
     return redirect(
-
         "payments",
-
         movie_id=show.movie.id
-
     )
-
 
 @login_required
 def payment(request, movie_id):
