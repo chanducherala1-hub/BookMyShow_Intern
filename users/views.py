@@ -9,8 +9,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 
 import random
 
@@ -28,27 +26,34 @@ def register(request):
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
+        # Check passwords match
         if password1 != password2:
-            messages.error(request, "Passwords do not match.")
+            messages.error(
+                request,
+                "Passwords do not match."
+            )
             return redirect("register")
 
+        # Check email already exists
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already taken.")
+            messages.error(
+                request,
+                "Email already taken."
+            )
             return redirect("register")
 
+        # Check phone number already exists
         if User.objects.filter(phone_number=phone_number).exists():
-            messages.error(request, "Phone number already taken.")
-            return redirect
-        try:
-            validate_password(password1)
-        except ValidationError as e:
-            for error in e.messages:
-                messages.error(request, error)
-
+            messages.error(
+                request,
+                "Phone number already taken."
+            )
             return redirect("register")
 
+        # Generate OTP
         otp = str(random.randint(100000, 999999))
 
+        # Hash password before storing it in session
         password_hash = make_password(password1)
 
         request.session["pending_user"] = {
@@ -93,9 +98,10 @@ def register(request):
 
             return redirect("register")
 
-    return render(request, "users/register.html")
-
-
+    return render(
+        request,
+        "users/register.html"
+    )
 
 def verify_otp(request):
 

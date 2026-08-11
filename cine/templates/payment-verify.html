@@ -25,7 +25,7 @@
                 <h3>Booking Details</h3>
                 <p><strong>Movie:</strong> {{ movie.title }}</p>
                 <p><strong>Theater:</strong> {{ show.screen.theater.theater_name }}</p>
-                <p><strong>Screen:</strong> ({{ show.screen_number }})</p>
+                <p><strong>Screen:</strong> ({{ screen.screen_number }})</p>
                 <p><strong>Show Date & Time:</strong> {{ show.show_date }} at {{ show.show_time }}</p>
                 <p><strong>Seats:</strong> 
                     {% for seat in seats %}
