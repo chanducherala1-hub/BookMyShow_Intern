@@ -122,13 +122,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'etr8wbti'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '667632822188361'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '2NV2tJz0RAYRP94sUhozIgB_dpE'),
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
 }
-
-# Storage backends configuration for Django 4.2+ & 6.x
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 STORAGES = {
     "default": {
@@ -138,6 +135,10 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+# Storage backends configuration for Django 4.2+ & 6.x
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
