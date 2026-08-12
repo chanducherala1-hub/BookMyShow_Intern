@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-
+from django.urls import reverse
 import random
 
 
@@ -261,10 +261,7 @@ def forgot_password(request):
         email = request.POST.get("email")
 
         try:
-
-            user = User.objects.get(
-                email=email
-            )
+            user = User.objects.get(email=email)
 
         except User.DoesNotExist:
 
@@ -275,18 +272,22 @@ def forgot_password(request):
 
             return redirect("forgot_password")
 
-        token = default_token_generator.make_token(
-            user
-        )
+        token = default_token_generator.make_token(user)
 
         uid = urlsafe_base64_encode(
             force_bytes(user.pk)
         )
 
-        reset_url = (
-            f"{settings.SITE_URL}"
-            f"/reset-password/{uid}/{token}/"
+        # Generate the reset URL automatically
+        reset_path = reverse(
+            "reset_password",
+            kwargs={
+                "uidb64": uid,
+                "token": token,
+            }
         )
+
+        reset_url = request.build_absolute_uri(reset_path)
 
         subject = "BookMyShow Password Reset"
 
@@ -328,8 +329,6 @@ def forgot_password(request):
         request,
         "users/forgot_password.html"
     )
-
-
 
 User = get_user_model()
 
